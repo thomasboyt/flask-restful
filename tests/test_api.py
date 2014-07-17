@@ -406,7 +406,7 @@ class APITestCase(unittest.TestCase):
 
         exception = Mock()
         exception.code = 404
-        exception.data = {"status": 404, "message": "Not Found"}
+        exception.data = {"message": "Not Found"}
         api.add_resource(view, '/foo', endpoint='bor')
         api.add_resource(view, '/fee', endpoint='bir')
         api.add_resource(view, '/fii', endpoint='ber')
@@ -415,14 +415,14 @@ class APITestCase(unittest.TestCase):
             resp = api.handle_error(exception)
             self.assertEquals(resp.status_code, 404)
             self.assertEquals(resp.data.decode(), dumps({
-                "status": 404, "message": "Not Found",
+                "message": "Not Found",
             }))
 
         with app.test_request_context("/fOo"):
             resp = api.handle_error(exception)
             self.assertEquals(resp.status_code, 404)
             self.assertEquals(resp.data.decode(), dumps({
-                "status": 404, "message": "Not Found. You have requested this URI [/fOo] but did you mean /foo ?",
+                "message": "Not Found. You have requested this URI [/fOo] but did you mean /foo ?",
             }))
 
         with app.test_request_context("/fOo"):
@@ -430,7 +430,7 @@ class APITestCase(unittest.TestCase):
             resp = api.handle_error(exception)
             self.assertEquals(resp.status_code, 404)
             self.assertEquals(resp.data.decode(), dumps({
-                "status": 404, "message": "You have requested this URI [/fOo] but did you mean /foo ?",
+                "message": "You have requested this URI [/fOo] but did you mean /foo ?",
             }))
 
         app.config['ERROR_404_HELP'] = False
@@ -440,7 +440,7 @@ class APITestCase(unittest.TestCase):
             resp = api.handle_error(exception)
             self.assertEquals(resp.status_code, 404)
             self.assertEquals(resp.data.decode(), dumps({
-                "status": 404
+                "message": "Not Found",
             }))
 
     def test_media_types(self):
@@ -752,6 +752,7 @@ class APITestCase(unittest.TestCase):
 
         class FooResource(flask_restful.Resource):
             fields = {'foo': flask_restful.fields.Float}
+
             def get(self):
                 return flask_restful.marshal({"foo": 3.0}, self.fields)
 
@@ -783,7 +784,7 @@ class APITestCase(unittest.TestCase):
         with app.test_request_context("/foo"):
             resp = api.handle_error(exception)
             self.assertEquals(resp.status_code, 418)
-            self.assertDictEqual(loads(resp.data), {"message": "api is foobar", "status": 418})
+            self.assertDictEqual(loads(resp.data), {"message": "api is foobar"})
 
 if __name__ == '__main__':
     unittest.main()
