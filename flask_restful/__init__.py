@@ -9,7 +9,7 @@ from flask.signals import got_request_exception
 from werkzeug.exceptions import HTTPException, MethodNotAllowed, NotFound
 from werkzeug.http import HTTP_STATUS_CODES
 from werkzeug.wrappers import Response as ResponseBase
-from flask.ext.restful.utils import error_data, unpack
+from flask.ext.restful.utils import http_status_message, unpack
 from flask.ext.restful.representations.json import output_json
 import sys
 from flask.helpers import _endpoint_from_view_func
@@ -279,7 +279,10 @@ class Api(object):
                 raise e
 
         code = getattr(e, 'code', 500)
-        data = getattr(e, 'data', error_data(code))
+        message = str(e) or http_status_message(code)
+        data = {
+            'message': message,
+        }
 
         if code >= 500:
 

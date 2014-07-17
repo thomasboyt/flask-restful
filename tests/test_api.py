@@ -8,7 +8,7 @@ except:
     from unittest.mock import Mock, patch
 import flask
 import werkzeug
-from flask.ext.restful.utils import http_status_message, error_data, unpack
+from flask.ext.restful.utils import http_status_message, unpack
 import flask_restful
 import flask_restful.fields
 from flask_restful import OrderedDict
@@ -88,12 +88,6 @@ class APITestCase(unittest.TestCase):
             self.assertEquals(resp.status_code, 401)
             self.assertEquals(resp.headers['WWW-Authenticate'],
                               'Basic realm="test-realm"')
-
-    def test_error_data(self):
-        self.assertEquals(error_data(400), {
-            'status': 400,
-            'message': 'Bad Request',
-        })
 
     def test_marshal(self):
         fields = OrderedDict([('foo', flask_restful.fields.Raw)])
