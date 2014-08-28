@@ -147,7 +147,7 @@ class Argument(object):
 
         if current_app.config.get("BUNDLE_ERRORS", False) or bundle_errors:
             return error, msg
-        flask_restful.abort(400, message=msg)
+        flask_restful.abort(400, message=msg, field=self.name)
 
     def parse(self, request, bundle_errors=False):
         """Parses argument value(s) from the request, converting according to
